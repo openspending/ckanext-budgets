@@ -24,7 +24,6 @@ setup(
     ],
     entry_points='''
         [ckan.plugins]
-        # Add plugins here, e.g.
-        # myplugin=ckanext.budgetdatapackage.plugin:PluginClass
+        budgetdatapackage=ckanext.budgetdatapackage.plugin:BudgetDataPackagePlugin
     ''',
 )
