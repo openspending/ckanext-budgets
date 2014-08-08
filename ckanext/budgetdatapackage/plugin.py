@@ -1,5 +1,14 @@
 import ckan.plugins as plugins
+import pylons.config as config
 
+import datetime
+import os.path
+
+from ckanext.budgetdatapackage.lib.resource import BudgetDataPackage
+from ckanext.budgetdatapackage import exceptions
+
+import logging
+log = logging.getLogger(__name__)
 
 class BudgetDataPackagePlugin(plugins.SingletonPlugin):
     """Budget Data Package creator
@@ -10,41 +19,70 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin):
     create a budget data package descriptor file (datapackage.json)
     """
 
-    # We also need another interface for resource creation
-    plugins.implements(plugins.IResourceUrlChange)
+    plugins.implements(plugins.IResourceModification)
 
-    def notify(self, resource):
+    def __init__(self, *args, **kwargs):
         """
-        This functions receives a notification of resource url changes.
-
-        Changing a resource url means we have to first check if the dataset
-        is a budget data package, then if so we re-parse the resource to
-        update the resource metdata and see if it fully conforms with the
-        budget data package specification. If it does not we throw a warning
-        about not being able to include it in the budget data package. If it
-        does, then we just update the resource.
+        Initialize the plugin. This creates a data object which holds a
+        BudgetDataPackage parser which operates based on a specification
+        which is either provided in the config via:
+        ``ckan.budgets.specification`` or the included version.
         """
 
+        specification = config.get(
+            'ckan.budgets.specification',
+            os.path.join(os.path.dirname(__file__), 'data', 'bdp.json'))
+        self.data = BudgetDataPackage(specification)
+
+    def before_create(self, context, resource):
+        """
+        When triggered the resource which can either be uploaded or linked
+        to will be parsed and analysed to see if it possibly is a budget
+        data package resource (checking if all required headers and any of
+        the recommended headers exist in the csv).
+
+        The budget data package specific fields are then appended to the
+        resource which makes it useful for export the dataset as a budget
+        data package.
+        """
+
+        # If the resource is being uploaded we load the uploaded file
+        # If not we load the provided url
+        if resource.get('upload', ''):
+            self.data.load(resource['upload'].file)
+        else:
+            self.data.load(resource['url'])
+
+        # Try to grab a budget data package schema from the resource.
+        # The schema only allows fields which are defined in the budget
+        # data package specification. If a field is found that is not in
+        # the specification this will return a NotABudgetDataPackageException
+        # and in that case we can just return and ignore the resource
+        try:
+            resource['schema'] = self.data.schema
+        except exceptions.NotABudgetDataPackageException:
+            log.debug('Resource is not a Budget Data Package')
+            return
+
+        # If the schema fits, this can be exported as a budget data package
+        # so we add the missing metadata fields to the resource.
+        resource['datePublished'] = datetime.date.today().isoformat()
+        resource['dateLastUpdated'] = datetime.date.today().isoformat()
+        resource['standard'] = self.data.version
+        resource['granularity'] = self.data.granularity
+        resource['type'] = self.data.budget_type
+
+    def after_create(self, context, resource):
         pass
 
-    def missing(self, resource):
-        """
-        This function is missing from CKAN.
+    def before_update(self, context, current, resource):
+        pass
 
-        What this function should be is an extension of a currently
-        non-existent interface that gets triggered when a resource is
-        created.
+    def after_update(self, context, resource):
+        pass
 
-        When triggered the resource which can either be uploaded or linked
-        to will be downloaded and parsed to see if it possibly is a budget
-        data package resource (checking if all required headers and any of
-        the recommended headers exist in the csv). If it is then the dataset
-        gets marked as a budget data package and the third step of the dataset
-        creation process (additional information) will also ask about budget
-        data package related metadata around both the overall dataset as well
-        as each resource. That information will be saved as part of the
-        dataset and from then on it will be possible to access the dataset
-        as a budget data package.
-        """
+    def before_delete(self, context, resource, resources):
+        pass
 
+    def after_delete(self, context, resources):
         pass

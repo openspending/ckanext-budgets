@@ -1,0 +1,170 @@
+{
+    "fields": {
+        "admin": {
+            "description": "The name of the government entity legally responsible for spending the budgeted amount.", 
+            "type": "string"
+        }, 
+        "adminID": {
+            "description": "The internal code for the administrative entity.", 
+            "type": "string"
+        }, 
+        "adminOrgID": {
+            "description": "The IATI organization identifier for the government entity legally responsible for spending the budgeted amount.", 
+            "type": "string"
+        }, 
+        "amount": {
+            "description": "The amount of money associated with this budget item.", 
+            "type": "number"
+        }, 
+        "amountAdjusted": {
+            "description": "The monetary amount allocated for expenditure for this transaction, after adjustments.", 
+            "type": "number"
+        }, 
+        "amountBudgeted": {
+            "description": "The monetary amount initially budgeted for this transaction.", 
+            "type": "number"
+        }, 
+        "budgetLineItem": {
+            "description": "The budget line item authorizing the expenditure.", 
+            "type": "string"
+        }, 
+        "code": {
+            "description": "Internal identifier used by data publisher for budget / revenue item.", 
+            "type": "string"
+        }, 
+        "cofog": {
+            "description": "The COFOG functional classification for the budget item.", 
+            "type": "string"
+        }, 
+        "contractID": {
+            "description": "The contract ID associated with the transaction.", 
+            "type": "string"
+        }, 
+        "date": {
+            "description": "The date on which the transaction took place.", 
+            "type": "date"
+        }, 
+        "dateAdjusted": {
+            "description": "The date on which the amount budgeted for the transaction was adjusted to the allocated amount.", 
+            "type": "date"
+        }, 
+        "dateBudgeted": {
+            "description": "The date on which the initial budget plan authorizing the transaction was made.", 
+            "type": "date"
+        }, 
+        "dateReported": {
+            "description": "The date on which the transaction was reported to the publishing body.", 
+            "type": "date"
+        }, 
+        "description": {
+            "description": "Human-readable description of budget / revenue item.", 
+            "type": "string"
+        }, 
+        "economic": {
+            "description": "Human-readable name of the economic classification of the budget item (i.e. the type of expenditure, e.g. purchases of goods, personnel expenses, etc.), drawn from the publisher's chart of accounts.", 
+            "type": "string"
+        }, 
+        "economicID": {
+            "description": "The internal code identifier for the economic classification", 
+            "type": "string"
+        }, 
+        "financialSource": {
+            "description": "Classification of the means of financing the expenditure (to distinguish those financed by loans, grants, aid, etc. from those drawn from a general fund).", 
+            "type": "string"
+        }, 
+        "functional": {
+            "description": "Human-readable name of the (non-COFOG) functional classification of the budget item (i.e. the socioeconomic objective or policy goal of the spending; e.g. \"secondary education\"), drawn from the publisher's chart of account.", 
+            "type": "string"
+        }, 
+        "functionalID": {
+            "description": "The internal code identifier for the functional classification.", 
+            "type": "string"
+        }, 
+        "fund": {
+            "description": "The fund from which the budget item will be drawn. (This refers to a named revenue stream.)", 
+            "type": "string"
+        }, 
+        "fundID": {
+            "description": "The internal code identifier for the fund.", 
+            "type": "string"
+        }, 
+        "geocode": {
+            "description": "Name of the geographical region targeted by the budget item.", 
+            "type": "string"
+        }, 
+        "gfsmExpense": {
+            "description": "The GFSM 2001 economic classification for the budget item.", 
+            "type": "string"
+        }, 
+        "gfsmRevenue": {
+            "description": "The GFSM 2001 economic classification of revenues for the revenue item.", 
+            "type": "string"
+        }, 
+        "id": {
+            "description": "A globally unique identifier for the budget item.", 
+            "type": "string"
+        }, 
+        "invoiceID": {
+            "description": "The invoice number given by the vendor or supplier.", 
+            "type": "string"
+        }, 
+        "program": {
+            "description": "Name of the government program underwriting the transaction. A program is a set of goal-oriented activities that has been reified by the government and made the responsibility of some ministry.", 
+            "type": "string"
+        }, 
+        "programID": {
+            "description": "The internal code identifier for the government program.", 
+            "type": "string"
+        }, 
+        "project": {
+            "description": "Name of the project underwriting the transaction. A project is an indivisible activity with a dedicated budget and fixed schedule.", 
+            "type": "string"
+        }, 
+        "projectID": {
+            "description": "The internal code identifier for the project.", 
+            "type": "string"
+        }, 
+        "purchaserID": {
+            "description": "The government entity acting as purchaser for the transaction, if different from the institution controlling the project.", 
+            "type": "string"
+        }, 
+        "purchaserOrgID": {
+            "description": "The IATI organization identifier for the government entity acting as purchaser for the transaction.", 
+            "type": "string"
+        }, 
+        "supplier": {
+            "description": "The name of the recipient of the expenditure.", 
+            "type": "string"
+        }, 
+        "type": {
+            "description": "Budgetary classification of item. Valid values: \"personnel\", \"non-personnel recurrent\", \"capital\", \"other\".", 
+            "type": "string"
+        }
+    }, 
+    "requiredFields": {
+        "aggregated-expenditure": [
+            "amount", 
+            "id", 
+            "admin", 
+            "cofog"
+        ], 
+        "aggregated-revenue": [
+            "amount", 
+            "id", 
+            "gfsmRevenue"
+        ], 
+        "transactional-expenditure": [
+            "amount", 
+            "id", 
+            "admin", 
+            "date", 
+            "supplier"
+        ], 
+        "transactional-revenue": [
+            "amount", 
+            "id", 
+            "gfsmRevenue"
+        ]
+    }, 
+    "version": "prerelease-MayDay"
+}

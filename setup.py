@@ -21,9 +21,12 @@ setup(
     zip_safe=False,
     install_requires=[
         # -*- Extra requirements: -*-
+        'unicodecsv',
+	'requests',
+	'six',
     ],
     entry_points='''
         [ckan.plugins]
-        budgetdatapackage=ckanext.budgetdatapackage.plugin:BudgetDataPackagePlugin
+        budgets=ckanext.budgetdatapackage.plugin:BudgetDataPackagePlugin
     ''',
 )
