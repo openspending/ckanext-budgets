@@ -4,8 +4,8 @@ import pylons.config as config
 import datetime
 import os.path
 
-from ckanext.budgetdatapackage.lib.resource import BudgetDataPackage
-from ckanext.budgetdatapackage import exceptions
+from ckanext.budgets.lib.budgetdatapackage import BudgetDataPackage
+from ckanext.budgets import exceptions
 
 import logging
 log = logging.getLogger(__name__)
@@ -48,10 +48,10 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin):
 
         # If the resource is being uploaded we load the uploaded file
         # If not we load the provided url
-        if resource.get('upload', ''):
-            self.data.load(resource['upload'].file)
-        else:
+        if resource.get('upload', '') == '':
             self.data.load(resource['url'])
+        else:
+            self.data.load(resource['upload'].file)
 
         # Try to grab a budget data package schema from the resource.
         # The schema only allows fields which are defined in the budget

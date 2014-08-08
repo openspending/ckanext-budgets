@@ -6,7 +6,7 @@ import cStringIO
 import unicodecsv as csv
 from contextlib import closing
 
-from ckanext.budgetdatapackage import exceptions
+from ckanext.budgets import exceptions
 
 class BudgetDataPackage(object):
     """

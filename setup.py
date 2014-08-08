@@ -4,7 +4,7 @@ import sys, os
 version = '0.1'
 
 setup(
-    name='ckanext-budgetdatapackage',
+    name='ckanext-budgets',
     version=version,
     description="CKAN extension for creating and distributing budget data packages",
     long_description='''
@@ -16,7 +16,7 @@ setup(
     url='',
     license='AGPLv3',
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
-    namespace_packages=['ckanext', 'ckanext.budgetdatapackage'],
+    namespace_packages=['ckanext', 'ckanext.budgets'],
     include_package_data=True,
     zip_safe=False,
     install_requires=[
@@ -27,6 +27,6 @@ setup(
     ],
     entry_points='''
         [ckan.plugins]
-        budgets=ckanext.budgetdatapackage.plugin:BudgetDataPackagePlugin
+        budgets=ckanext.budgets.plugin:BudgetDataPackagePlugin
     ''',
 )
