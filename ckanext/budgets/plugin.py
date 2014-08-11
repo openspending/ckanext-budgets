@@ -1,5 +1,4 @@
 import ckan.plugins as plugins
-import pylons.config as config
 
 import datetime
 import os.path
@@ -19,9 +18,10 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin):
     create a budget data package descriptor file (datapackage.json)
     """
 
+    plugins.implements(plugins.IConfigurable)
     plugins.implements(plugins.IResourceModification)
 
-    def __init__(self, *args, **kwargs):
+    def configure(self, config):
         """
         Initialize the plugin. This creates a data object which holds a
         BudgetDataPackage parser which operates based on a specification
