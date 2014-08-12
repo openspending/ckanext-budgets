@@ -33,7 +33,8 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin):
 
         specification = config.get(
             'ckan.budgets.specification',
-            os.path.join(os.path.dirname(__file__), 'data', 'bdp.json'))
+            os.path.join(os.path.dirname(__file__),
+                         'data', 'bdp', 'schema.json'))
         self.data = BudgetDataPackage(specification)
 
     def update_config(self, config):
