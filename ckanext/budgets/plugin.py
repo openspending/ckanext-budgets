@@ -9,6 +9,7 @@ from ckanext.budgets import exceptions
 import logging
 log = logging.getLogger(__name__)
 
+
 class BudgetDataPackagePlugin(plugins.SingletonPlugin):
     """Budget Data Package creator
 
@@ -19,6 +20,7 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin):
     """
 
     plugins.implements(plugins.IConfigurable)
+    plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IResourceModification)
 
     def configure(self, config):
@@ -33,6 +35,11 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin):
             'ckan.budgets.specification',
             os.path.join(os.path.dirname(__file__), 'data', 'bdp.json'))
         self.data = BudgetDataPackage(specification)
+
+    def update_config(self, config):
+        plugins.toolkit.add_template_directory(
+            config,
+            os.path.join(os.path.dirname(__file__), 'form', 'templates'))
 
     def before_create(self, context, resource):
         """
