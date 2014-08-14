@@ -64,7 +64,7 @@
           {{ _('This field is optional.') }}
         </span>
         {% endcall %}
-        {% call form.input('status', id='field-status', label=_('Publication status'), placeholder=('e.g. approved plan, real data'), value=data.status, error=errors.year, classes=['control-small']) %}
+        {% call form.input('status', id='field-status', label=_('Publication status'), placeholder=('e.g. approved plan, real data'), value=data.status, error=errors.status, classes=['control-small']) %}
         <span class="info-block info-inline">
           <i class="icon-info-sign"></i>
           {{ _('The status of this data in the publication workflow, if applicable.') }}
