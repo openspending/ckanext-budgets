@@ -10,7 +10,8 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class BudgetDataPackagePlugin(plugins.SingletonPlugin):
+class BudgetDataPackagePlugin(plugins.SingletonPlugin,
+                              plugins.toolkit.DefaultDatasetForm):
     """Budget Data Package creator
 
     The plugin hooks into file upload/import and analyses uploaded/imported
@@ -21,6 +22,7 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin):
 
     plugins.implements(plugins.IConfigurable)
     plugins.implements(plugins.IConfigurer)
+    plugins.implements(plugins.IDatasetForm)
     plugins.implements(plugins.IResourceModification)
 
     def configure(self, config):
@@ -38,9 +40,45 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin):
         self.data = BudgetDataPackage(specification)
 
     def update_config(self, config):
+        pass
         plugins.toolkit.add_template_directory(
             config,
             os.path.join(os.path.dirname(__file__), 'form', 'templates'))
+
+    @property
+    def resource_schema_additions(self):
+        return {
+            'country': [
+                plugins.toolkit.get_validator('ignore_missing')
+            ],
+            'currency': [plugins.toolkit.get_validator('ignore_missing')],
+            'year': [
+                plugins.toolkit.get_validator('ignore_missing'),
+                plugins.toolkit.get_validator('is_positive_integer'),
+            ],
+            'status': [plugins.toolkit.get_validator('ignore_missing')]
+        }
+
+    def create_package_schema(self):
+        schema = super(BudgetDataPackagePlugin, self).create_package_schema()
+        schema['resources'].update(self.resource_schema_additions)
+        return schema
+
+    def update_package_schema(self):
+        schema = super(BudgetDataPackagePlugin, self).update_package_schema()
+        schema['resources'].update(self.resource_schema_additions)
+        return schema
+
+    def show_package_schema(self):
+        schema = super(BudgetDataPackagePlugin, self).show_package_schema()
+        schema['resources'].update(self.resource_schema_additions)
+        return schema
+
+    def is_fallback(self):
+        return True
+
+    def package_types(self):
+        return ['dataset']
 
     def before_create(self, context, resource):
         """
