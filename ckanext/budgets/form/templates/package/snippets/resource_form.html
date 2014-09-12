@@ -43,14 +43,14 @@
     {% endblock %}
 
     {% block budget_fields %}
-        {% call form.input('country', id='field-country', label=_('Country'), placeholder=_('e.g. Mexico, Iceland'), value=data.country, error=errors.country, classes=['control-small']) %}
+        {% call form.select('country', id='field-country', label=_('Country'), options=h.get_countries(), selected=data.country, error=errors.country, classes=['control-small']) %}
         <span class="info-block info-inline">
           <i class="icon-info-sign"></i>
           {{ _('The country the data applies to.') }}
           {{ _('This field is optional.') }}
         </span>
         {% endcall %}
-        {% call form.input('currency', id='field-currency', label=_('Currency'), placeholder=_('e.g. MXN, ISK'), value=data.currency, error=errors.currency, classes=['control-small']) %}
+        {% call form.select('currency', id='field-currency', label=_('Currency'), options=h.get_currencies(), selected=data.currency, error=errors.currency, classes=['control-small']) %}
         <span class="info-block info-inline">
           <i class="icon-info-sign"></i>
           {{ _('The currency of amounts in this data are in.') }}
@@ -64,7 +64,7 @@
           {{ _('This field is optional.') }}
         </span>
         {% endcall %}
-        {% call form.input('status', id='field-status', label=_('Publication status'), placeholder=('e.g. approved plan, real data'), value=data.status, error=errors.status, classes=['control-small']) %}
+        {% call form.select('status', id='field-status', label=_('Publication status'), options=h.get_statuses(), selected=data.status, error=errors.status, classes=['control-small']) %}
         <span class="info-block info-inline">
           <i class="icon-info-sign"></i>
           {{ _('The status of this data in the publication workflow, if applicable.') }}

@@ -2,12 +2,14 @@ import ckan.plugins as plugins
 
 import datetime
 import os.path
+import json
 
 from ckanext.budgets.lib.budgetdatapackage import BudgetDataPackage
 from ckanext.budgets import exceptions
 
 import logging
 log = logging.getLogger(__name__)
+
 
 
 class BudgetDataPackagePlugin(plugins.SingletonPlugin,
@@ -24,6 +26,13 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IDatasetForm)
     plugins.implements(plugins.IResourceModification)
+    plugins.implements(plugins.ITemplateHelpers)
+
+    def __init__(self, *args, **kwargs):
+        self.countries = {}
+        self.currencies = {}
+        self.statuses = {}
+        self.data = None
 
     def configure(self, config):
         """
@@ -39,11 +48,60 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
                          'data', 'bdp', 'schema.json'))
         self.data = BudgetDataPackage(specification)
 
+        countries_json = config.get(
+            'ckan.budgets.countries',
+            os.path.join(os.path.dirname(__file__),
+                         'data', 'countries.json'))
+        with open(countries_json) as country_list:
+            self.countries = json.load(country_list)
+
+        currencies_json = config.get(
+            'ckan.budget.currencies',
+            os.path.join(os.path.dirname(__file__),
+                         'data', 'currencies.json'))
+        with open(currencies_json) as currency_list:
+            self.currencies = json.load(currency_list)
+
+        statuses_json = config.get(
+            'ckan.budget.statuses',
+            os.path.join(os.path.dirname(__file__),
+                         'data', 'bdp', 'statuses.json'))
+        with open(statuses_json) as statuses_list:
+            self.statuses = json.load(statuses_list)
+
     def update_config(self, config):
         pass
         plugins.toolkit.add_template_directory(
             config,
             os.path.join(os.path.dirname(__file__), 'form', 'templates'))
+
+    def _sort_value(self, dictionary):
+        return sorted(dictionary.iteritems(), key=lambda (key, value): value)
+
+    def get_countries(self):
+        countries = [{'value':code, 'text':name}
+                     for (code, name) in self._sort_value(self.countries)]
+        countries.insert(0, {'value':'', 'text':'-- Not applicable --'})
+        return countries
+
+    def get_currencies(self):
+        currencies = [{'value':code, 'text':name}
+                      for (code, name) in self._sort_value(self.currencies)]
+        currencies.insert(0, {'value':'', 'text':'-- Not applicable --'})
+        return currencies
+
+    def get_statuses(self):
+        statuses = [{'value':code, 'text':label}
+                    for (code, label) in self._sort_value(self.statuses)]
+        statuses.insert(0, {'value':'', 'text':'-- Not applicable --'})
+        return statuses
+
+    def get_helpers(self):
+        return {
+            'get_countries': self.get_countries,
+            'get_currencies': self.get_currencies,
+            'get_statuses': self.get_statuses
+        }
 
     @property
     def resource_schema_additions(self):
@@ -51,12 +109,16 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
             'country': [
                 plugins.toolkit.get_validator('ignore_missing')
             ],
-            'currency': [plugins.toolkit.get_validator('ignore_missing')],
+            'currency': [
+                plugins.toolkit.get_validator('ignore_missing')
+            ],
             'year': [
                 plugins.toolkit.get_validator('ignore_missing'),
                 plugins.toolkit.get_validator('is_positive_integer'),
             ],
-            'status': [plugins.toolkit.get_validator('ignore_missing')]
+            'status': [
+                plugins.toolkit.get_validator('ignore_missing')
+            ]
         }
 
     def create_package_schema(self):
