@@ -25,7 +25,7 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
     plugins.implements(plugins.IConfigurable)
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IDatasetForm)
-    plugins.implements(plugins.IResourceModification)
+    plugins.implements(plugins.IResourceController)
     plugins.implements(plugins.ITemplateHelpers)
 
     def __init__(self, *args, **kwargs):
@@ -193,4 +193,7 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
         pass
 
     def after_delete(self, context, resources):
+        pass
+
+    def before_show(self, resource):
         pass
