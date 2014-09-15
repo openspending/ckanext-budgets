@@ -1,4 +1,5 @@
 import ckan.plugins as plugins
+from ckan.logic.validators import int_validator
 
 import datetime
 import os.path
@@ -103,21 +104,45 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
             'get_statuses': self.get_statuses
         }
 
+    def country_validator(self, value, context):
+        if value and value not in self.countries:
+            raise plugins.toolkit.Invalid(
+                'Country value ({0}) is invalid'.format(value))
+        return value
+
+    def currency_validator(self, value, context):
+        if value and value not in self.currencies:
+            raise plugins.toolkit.Invalid(
+                'Currency value ({0}) is invalid'.format(value))
+        return value
+
+    def year_validator(self, value, context):
+        value = int_validator(value, context)
+        if value and value < 0:
+            raise plugins.toolkit.Invalid(
+                'Year value ({0}) is invalid'.format(value))
+        return value
+
+    def status_validator(self, value, context):
+        if value and value not in self.statuses:
+            raise plugins.toolkit.Invalid(
+                'Status value ({0}) is invalid'.format(value))
+        return value
+
     @property
     def resource_schema_additions(self):
         return {
             'country': [
-                plugins.toolkit.get_validator('ignore_missing')
+                self.country_validator
             ],
             'currency': [
-                plugins.toolkit.get_validator('ignore_missing')
+                self.currency_validator
             ],
             'year': [
-                plugins.toolkit.get_validator('ignore_missing'),
-                plugins.toolkit.get_validator('is_positive_integer'),
+                self.year_validator
             ],
             'status': [
-                plugins.toolkit.get_validator('ignore_missing')
+                self.status_validator
             ]
         }
 
