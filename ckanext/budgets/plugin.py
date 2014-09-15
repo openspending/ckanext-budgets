@@ -221,4 +221,4 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
         pass
 
     def before_show(self, resource):
-        pass
+        return resource
