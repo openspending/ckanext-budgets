@@ -24,6 +24,7 @@ setup(
         'unicodecsv',
 	'requests',
 	'six',
+        'py-dateutil',
     ],
     entry_points='''
         [ckan.plugins]

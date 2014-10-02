@@ -28,6 +28,7 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
     plugins.implements(plugins.IDatasetForm)
     plugins.implements(plugins.IResourceController)
     plugins.implements(plugins.ITemplateHelpers)
+    plugins.implements(plugins.IRoutes, inherit=True)
 
     def __init__(self, *args, **kwargs):
         self.countries = {}
@@ -76,6 +77,17 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
             config,
             os.path.join(os.path.dirname(__file__), 'form', 'templates'))
 
+
+    def before_map(self, map_):
+        controller = "ckanext.budgets.controllers:BudgetDataPackageController"
+        map_.connect(
+            "budgetdatapackage_descriptor",
+            "/dataset/{id}/resource/{resource_id}/datapackage.json",
+            controller=controller,
+            action="descriptor")
+
+        return map_
+
     def _sort_value(self, dictionary):
         return sorted(dictionary.iteritems(), key=lambda (key, value): value)
 
@@ -121,13 +133,19 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
         if value and value < 0:
             raise plugins.toolkit.Invalid(
                 'Year value ({0}) is invalid'.format(value))
-        return value
+        return str(value)
 
     def status_validator(self, value, context):
         if value and value not in self.statuses:
             raise plugins.toolkit.Invalid(
                 'Status value ({0}) is invalid'.format(value))
         return value
+
+    def schema_validator(self, value, context):
+        if value:
+            return value
+
+        return []
 
     @property
     def resource_schema_additions(self):
@@ -143,6 +161,9 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
             ],
             'status': [
                 self.status_validator
+            ],
+            'schema': [
+                self.schema_validator
             ]
         }
 
@@ -195,12 +216,12 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
             resource['schema'] = self.data.schema
         except exceptions.NotABudgetDataPackageException:
             log.debug('Resource is not a Budget Data Package')
+            resource['schema'] = []
             return
 
         # If the schema fits, this can be exported as a budget data package
         # so we add the missing metadata fields to the resource.
-        resource['datePublished'] = datetime.date.today().isoformat()
-        resource['dateLastUpdated'] = datetime.date.today().isoformat()
+        resource['BudgetDataPackage'] = True
         resource['standard'] = self.data.version
         resource['granularity'] = self.data.granularity
         resource['type'] = self.data.budget_type
