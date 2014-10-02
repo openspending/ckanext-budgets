@@ -20,6 +20,10 @@ class BudgetDataPackageController(toolkit.BaseController):
         resource = toolkit.get_action('resource_show')(
             context, {'id': resource_id})
 
+        if not resource.get('BudgetDataPackage', False):
+            raise toolkit.ObjectNotFound(
+                'No descriptor file for this resource')
+
         # If last modified hasn't been set we set it as time of creation
         last_modified = resource.get('last_modified')
         if last_modified is None:
