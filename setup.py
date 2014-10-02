@@ -1,19 +1,28 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1'
+version = '0.1.0'
+
+description = "CKAN extension for creating/distributing budget data packages"
+with open('README.rst') as readme:
+    long_description = readme.read()
 
 setup(
     name='ckanext-budgets',
     version=version,
-    description="CKAN extension for creating and distributing budget data packages",
-    long_description='''
-    ''',
-    classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
-    keywords='',
+    description=description,
+    long_description=long_description,
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Other Audience',
+        'License :: OSI Approved :: GNU Affero General Public License v3',
+        'Programming Language :: Python :: 2.7',
+        'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
+    ],
+    keywords='ckan',
     author='Tryggvi Bjorgvinsson',
     author_email='tryggvi.bjorgvinsson@okfn.org',
-    url='',
+    url='https://github.com/tryggvib/ckanext-budgets',
     license='AGPLv3',
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     namespace_packages=['ckanext', 'ckanext.budgets'],
