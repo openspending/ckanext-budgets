@@ -25,9 +25,6 @@ setup(
     url='https://github.com/tryggvib/ckanext-budgets',
     license='AGPLv3',
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
-    package_data={
-        '': ['**/*.html', '**/*.json'],
-    },
     namespace_packages=['ckanext', 'ckanext.budgets'],
     include_package_data=True,
     zip_safe=False,
