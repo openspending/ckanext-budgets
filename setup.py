@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1.0'
+version = '0.1.1'
 
 description = "CKAN extension for creating/distributing budget data packages"
 with open('README.rst') as readme:
@@ -34,6 +34,7 @@ setup(
 	'requests',
 	'six',
         'py-dateutil',
+        'budgetdatapackage'
     ],
     entry_points='''
         [ckan.plugins]
