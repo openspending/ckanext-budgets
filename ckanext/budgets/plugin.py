@@ -132,8 +132,8 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
         return self.default_currency
 
     def get_statuses(self):
-        statuses = [{'value':code, 'text':label}
-                    for (code, label) in self._sort_value(self.statuses)]
+        statuses = [{'value':status_obj['status'], 'text':status_obj['label']}
+                    for status_obj  in self.statuses]
         statuses.insert(0, {'value':'', 'text':'-- Not applicable --'})
         return statuses
 

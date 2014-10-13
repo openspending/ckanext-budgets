@@ -1,6 +1,17 @@
-{
-    "proposed": "Proposed plan", 
-    "approved": "Approved plan", 
-    "adjusted": "Adjustments to approved plan", 
-    "executed": "Real data (executed plan)"
-}
+[
+    {
+        "status": "proposed",
+        "label": "Proposed plan"
+    },
+    {   "status": "approved",
+        "label": "Approved plan"
+    }, 
+    {
+        "status": "adjusted",
+        "label": "Adjustments to approved plan"
+    },
+    {
+        "status": "executed",
+        "label": "Real data (executed plan)"
+    }
+]
