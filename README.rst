@@ -15,15 +15,34 @@ that support budget data packages.
 Installation
 ------------
 
-Simply clone this library and run
+This CKAN extension can be installed via `pypi <http://pypi.python.org>`__ using ``pip``::
 
-::
+    pip install ckanext-budgets
 
-    python setup.py install
+If you have followed the `CKAN installation documentation <http://docs.ckan.org/en/latest/maintaining/installing/install-from-source.html>`__ remember to activate your CKAN environment (virtual environment) before installing the extension::
+
+    . /usr/lib/ckan/default/bin/activate
 
 Then add ``budgets`` to the list in ``ckan.plugins`` in your CKAN
 configuration file. Restart your webserver and budget data is
 automatically handled for you.
+
+Configuration
+-------------
+
+-  **ckan.budgets.specification** - JSON schema file to describe the budget
+   data package specification used.
+-  **ckan.budgets.countries** - JSON object with country codes as keys and
+   country names as values. Use this if you want to translate the country
+   names into another language (default is English).
+-  **ckan.budgets.currencies** - JSON object with currency code as keys and
+   currency names as values. Use this if you want to translated the currency
+   names into another language (default is English).
+-  **ckan.budgets.statuses** - JSON object representing the different status
+   of data with keys as *proposed*, *approved*, *adjusted* or *executed*) and
+   with the English description of those statuses as values. Use this if you
+   want to translate description into another language (status keys should
+   remain intact).
 
 License
 -------
