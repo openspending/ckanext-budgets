@@ -43,14 +43,17 @@
     {% endblock %}
 
     {% block budget_fields %}
-        {% call form.select('country', id='field-country', label=_('Country'), options=h.get_countries(), selected=data.country, error=errors.country, classes=['control-small']) %}
+	{% if not data.country and default_country %}
+	{{ default_country }}
+	{% endif %}
+        {% call form.select('country', id='field-country', label=_('Country'), options=h.get_countries(), selected=h.get_country(data.country), error=errors.country, classes=['control-small']) %}
         <span class="info-block info-inline">
           <i class="icon-info-sign"></i>
           {{ _('The country the data applies to.') }}
           {{ _('This field is optional.') }}
         </span>
         {% endcall %}
-        {% call form.select('currency', id='field-currency', label=_('Currency'), options=h.get_currencies(), selected=data.currency, error=errors.currency, classes=['control-small']) %}
+        {% call form.select('currency', id='field-currency', label=_('Currency'), options=h.get_currencies(), selected=h.get_currency(data.currency), error=errors.currency, classes=['control-small']) %}
         <span class="info-block info-inline">
           <i class="icon-info-sign"></i>
           {{ _('The currency of amounts in this data are in.') }}

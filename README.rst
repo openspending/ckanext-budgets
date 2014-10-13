@@ -43,6 +43,10 @@ Configuration
    with the English description of those statuses as values. Use this if you
    want to translate description into another language (status keys should
    remain intact).
+-  **ckan.budgets.default.country** - Country code of a default country which
+   is auto-selected.
+-  **ckan.budgets.default.currency** - Currency code of a default currency
+   which is auto-selected.
 
 License
 -------

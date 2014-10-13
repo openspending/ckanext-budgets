@@ -57,12 +57,30 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
         with open(countries_json) as country_list:
             self.countries = json.load(country_list)
 
+        country = config.get('ckan.budgets.default.country', None)
+        if country is not None:
+            self.default_country = country.upper()
+            if self.default_country not in self.countries:
+                raise ValueError('Uknown country code "{code}"'.format(
+                    code=country))
+        else:
+            self.default_currency = None
+
         currencies_json = config.get(
             'ckan.budget.currencies',
             os.path.join(os.path.dirname(__file__),
                          'data', 'currencies.json'))
         with open(currencies_json) as currency_list:
             self.currencies = json.load(currency_list)
+
+        currency = config.get('ckan.budgets.default.currency', None)
+        if currency is not None:
+            self.default_currency = currency.upper()
+            if self.default_currency not in self.currencies:
+                raise ValueError('Unknown currency code "{code}"'.format(
+                    code=currency))
+        else:
+            self.default_currency = None
 
         statuses_json = config.get(
             'ckan.budget.statuses',
@@ -97,11 +115,21 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
         countries.insert(0, {'value':'', 'text':'-- Not applicable --'})
         return countries
 
+    def get_country(self, default):
+        if not self.default_country:
+            return default
+        return self.default_country
+
     def get_currencies(self):
         currencies = [{'value':code, 'text':name}
                       for (code, name) in self._sort_value(self.currencies)]
         currencies.insert(0, {'value':'', 'text':'-- Not applicable --'})
         return currencies
+
+    def get_currency(self, default):
+        if not self.default_currency:
+            return default
+        return self.default_currency
 
     def get_statuses(self):
         statuses = [{'value':code, 'text':label}
@@ -112,7 +140,9 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
     def get_helpers(self):
         return {
             'get_countries': self.get_countries,
+            'get_country': self.get_country,
             'get_currencies': self.get_currencies,
+            'get_currency': self.get_currency,
             'get_statuses': self.get_statuses
         }
 
