@@ -166,7 +166,7 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
         return str(value)
 
     def status_validator(self, value, context):
-        if value and value not in self.statuses:
+        if value and value not in [s['status'] for s in self.statuses]:
             raise plugins.toolkit.Invalid(
                 'Status value ({0}) is invalid'.format(value))
         return value
@@ -218,6 +218,49 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
     def package_types(self):
         return ['dataset']
 
+    def in_resource(self, field, resource):
+        """
+        Return True if resource contains a valid value for the field
+        (not an empty or None value)
+        """
+        resource_field = resource.get(field, None)
+        return resource_field is not None and resource_field != ''
+
+    def are_budget_data_package_fields_filled_in(self, resource):
+        """
+        Check if the budget data package fields are all filled in because
+        if not then this can't be a budget data package
+        """
+        fields = ['country', 'currency', 'year', 'status']
+        return all([self.in_resource(f, resource) for f in fields])
+
+    def generate_budget_data_package(self, resource):
+        """
+        Try to grab a budget data package schema from the resource.
+        The schema only allows fields which are defined in the budget
+        data package specification. If a field is found that is not in
+        the specification this will return a NotABudgetDataPackageException
+        and in that case we can just return and ignore the resource
+        """
+
+        # Return if the budget data package fields have not been filled in
+        if not self.are_budget_data_package_fields_filled_in(resource):
+            return
+
+        try:
+            resource['schema'] = self.data.schema
+        except exceptions.NotABudgetDataPackageException:
+            log.debug('Resource is not a Budget Data Package')
+            resource['schema'] = []
+            return
+
+        # If the schema fits, this can be exported as a budget data package
+        # so we add the missing metadata fields to the resource.
+        resource['BudgetDataPackage'] = True
+        resource['standard'] = self.data.version
+        resource['granularity'] = self.data.granularity
+        resource['type'] = self.data.budget_type
+
     def before_create(self, context, resource):
         """
         When triggered the resource which can either be uploaded or linked
@@ -237,30 +280,32 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
         else:
             self.data.load(resource['upload'].file)
 
-        # Try to grab a budget data package schema from the resource.
-        # The schema only allows fields which are defined in the budget
-        # data package specification. If a field is found that is not in
-        # the specification this will return a NotABudgetDataPackageException
-        # and in that case we can just return and ignore the resource
-        try:
-            resource['schema'] = self.data.schema
-        except exceptions.NotABudgetDataPackageException:
-            log.debug('Resource is not a Budget Data Package')
-            resource['schema'] = []
-            return
-
-        # If the schema fits, this can be exported as a budget data package
-        # so we add the missing metadata fields to the resource.
-        resource['BudgetDataPackage'] = True
-        resource['standard'] = self.data.version
-        resource['granularity'] = self.data.granularity
-        resource['type'] = self.data.budget_type
+        self.generate_budget_data_package(resource)
 
     def after_create(self, context, resource):
         pass
 
     def before_update(self, context, current, resource):
-        pass
+        """
+        If the resource has changed we try to generate a budget data
+        package, but if it hasn't then we don't do anything
+        """
+
+        # Return if the budget data package fields have not been filled in
+        if not self.are_budget_data_package_fields_filled_in(resource):
+            return
+
+        if resource.get('upload', '') == '':
+            # If it isn't an upload we check if it's the same url
+            if current['url'] == resource['url']:
+                # Return if it's the same
+                return
+            else:
+                self.data.load(resource['url'])
+        else:
+            self.data.load(resource['upload'].file)
+
+        self.generate_budget_data_package(resource)
 
     def after_update(self, context, resource):
         pass
