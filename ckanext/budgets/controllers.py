@@ -16,6 +16,10 @@ class BudgetDataPackageController(toolkit.BaseController):
         context = {'model': ckan.model, 'session': ckan.model.Session,
                    'user': pylons.c.user or pylons.c.author}
 
+        # Get package
+        package = toolkit.get_action('package_show')(
+            context, {'id': id})
+
         # Get resource
         resource = toolkit.get_action('resource_show')(
             context, {'id': resource_id})
@@ -53,8 +57,8 @@ class BudgetDataPackageController(toolkit.BaseController):
         # Create the budget data package
         bdpkg = BudgetDataPackage(
             name=id,
-            title=resource['name'],
-            description=resource['description'],
+            title=package['title'],
+            description=package['notes'],
             resources=[bdgt_resource]
         )
 
