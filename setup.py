@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.3.1'
+version = '0.3.2'
 
 description = "CKAN extension for creating/distributing budget data packages"
 with open('README.rst') as readme:
