@@ -172,29 +172,27 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
                 'Status value ({0}) is invalid'.format(value))
         return value
 
-    def schema_validator(self, value, context):
-        if value:
-            return value
-
-        return []
-
     @property
     def resource_schema_additions(self):
         return {
             'country': [
+                plugins.toolkit.get_validator('ignore_missing'),
                 self.country_validator
             ],
             'currency': [
+                plugins.toolkit.get_validator('ignore_missing'),
                 self.currency_validator
             ],
             'year': [
+                plugins.toolkit.get_validator('ignore_missing'),
                 self.year_validator
             ],
             'status': [
+                plugins.toolkit.get_validator('ignore_missing'),
                 self.status_validator
             ],
             'schema': [
-                self.schema_validator
+                plugins.toolkit.get_validator('ignore_missing'),
             ]
         }
 
