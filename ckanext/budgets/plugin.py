@@ -1,5 +1,4 @@
 import ckan.plugins as plugins
-from ckan.logic.validators import int_validator
 
 import datetime
 import os.path
@@ -160,6 +159,7 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
 
     def year_validator(self, value, context):
         if value:
+            int_validator = plugins.toolkit.get_validator('int_validator')
             value = int_validator(value, context)
             if value < 0:
                 raise plugins.toolkit.Invalid(
