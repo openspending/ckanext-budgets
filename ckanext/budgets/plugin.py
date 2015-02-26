@@ -159,10 +159,11 @@ class BudgetDataPackagePlugin(plugins.SingletonPlugin,
         return value
 
     def year_validator(self, value, context):
-        value = int_validator(value, context)
-        if value and value < 0:
-            raise plugins.toolkit.Invalid(
-                'Year value ({0}) is invalid'.format(value))
+        if value:
+            value = int_validator(value, context)
+            if value < 0:
+                raise plugins.toolkit.Invalid(
+                    'Year value ({0}) is invalid'.format(value))
         return str(value)
 
     def status_validator(self, value, context):
